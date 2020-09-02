@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load static %}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>百知Python课程管理系统-重置</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+	<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+	<script type="text/javascript" src="js/register.js"></script>
+	<style>
+		.reg_form {
+			margin:65px 0 0 30px;
+		}
+	</style>
+    <script>
+        function check_pwd() {
+            var pwd = document.getElementById("user_pwd").value;
+            var pwd_span = document.getElementById("user-pwd_sapn");
+            //密码的规则： 密码必须为6到18位字母、数字或下划线
+            var rst = /^\w{6,18}$/;
+            if(rst.test(pwd)){
+                pwd_span.innerHTML = "".fontcolor("green");
+                return true
+            }else{
+                if (pwd===''){
+                    pwd_span.innerHTML = "不能为空".fontcolor('red');
+                    return false
+                }else{
+                    pwd_span.innerHTML = '密码必须为6到18位字母、数字或下划线'.fontcolor('red');
+                    return false
+                }
+            }
+        }
+        // 校验二次密码
+        function check_cpwd() {
+            var pwd = document.getElementById("user_pwd").value;
+            console.log(pwd);
+            var cpwd = document.getElementById("confirm-pwd").value;
+            console.log(cpwd);
+            var cpwd_span = document.getElementById("confirm-pwd_sapn");
+            var rst = /^\w{6,18}$/;
+            if (rst.test(cpwd)){
+                if(pwd===cpwd){
+                    cpwd_span.innerHTML = "".fontcolor('green');
+                    return true
+                }else{
+                    cpwd_span.innerHTML = "两次密码不一致".fontcolor("red");
+                    return false
+                }
+            }else{
+                if (cpwd===''){
+                    cpwd_span.innerHTML = '不能为空'.fontcolor('red');
+                    return false
+                }else {
+                    cpwd_span.innerHTML =" 密码必须为6到18位字母、数字或下划线".fontcolor("red")
+                    return false
+                }
+            }
+        }
+        function form_submit() {
+            boo1 = check_pwd();
+            boo2 = check_cpwd();
+            if (boo1&&boo2){
+                $.ajax({
+                    type: 'post',
+                    url: '{% url 'userapp:reset_logic' %}',
+                    data: $('form').serialize(),
+                    success: function (data) {
+                        alert(data)
+                    }
+                })
+            }
+        }
+    </script>
+</head>
+<body>
+	<div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo"><img src="{% static 'images/bz_logo.gif' %}"></a>
+			<div class="reg_slogan">站在时代风口 · 抢占人工智能</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>重置密码</h1>
+			</div>
+			<div class="reg_form clearfix">
+				<form method="post">
+                    {% csrf_token %}
+				<ul>
+					<li>
+						<label>输入密码:</label>
+						<input type="password" name="user-pwd" id="user_pwd" onblur="check_pwd()">
+                        <span id="user-pwd_sapn"></span>
+					</li>
+					<li>
+						<label>确认密码:</label>
+						<input type="password" name="confirm-pwd" id="confirm-pwd" onblur="check_cpwd()">
+                        <span id="confirm-pwd_sapn"></span>
+					</li>
+					<li class="reg_sub">
+						<input type="submit" value="提交" name="" onclick="form_submit()">
+					</li>
+				</ul>				
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="footer no-mp">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2020 北京百知教育科技有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+	
+</body>
+</html>

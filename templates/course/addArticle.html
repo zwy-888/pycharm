@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>
+    <link rel="stylesheet" type='text/css' href="{% static 'css/bodymain.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'css/addArticle.css' %}">
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static 'js/bootstrap.js' %}" type="text/javascript" charset="utf-8"></script>
+    <title>百知课程后台管理系统-增加文章</title>
+
+    <script>
+
+        function choosecourse() {
+            //获取当前内容
+            var val = $("[name='course_sel'] option:selected").text();
+            // 属性标签 后代里的option标签
+            console.log(val);
+            $.ajax({
+                type:'get',
+                url: '{% url "courseapp:get_cate" %}',
+                data: 'coursename=' + val,
+                success: function (data) {
+                    $('[name="cate_sel"]').html('<option value="default-course">请选择所属课程：</option>');
+                    // index,ele 是传过来两个值
+                    $(data).each(function (index,ele) {
+                        var name = $(this).attr('name');
+                        var op = $('<option>'+ name+'<option>');
+                        op.attr('value',$(this).attr('id'));
+                        $('[name="cate_sel"]').append(op)
+
+                    })
+                }
+            })
+        }
+        function checkarticle() {
+            var article = $('#my-inp').val();
+            var articlespan = $('#my-inp_name');
+            if (article===''){
+                articlespan.html('不能为空');
+                return false
+            }else{
+                return true
+            }
+        }
+        function checktext() {
+            if($('#form-control').val()===''){
+                $('#form-controlspan').html('不能为空');
+                return false
+            }else{
+                return true
+            }
+        }
+        function save() {
+            a = checktext();
+            b = checkarticle();
+            if (a&&b&&$('#time').val!==''){
+                //alert(123);
+                $.ajax({
+                    type: 'post',
+                    url: '{% url "courseapp:add_article_logic" %}',
+                    data:$('form').serialize(),
+                    success: function (data) {
+                        //alert(123456);
+                        if (data==='1'){
+                            console.log('haha');
+                            alert('添加成功');
+                            location.href = '{% url "courseapp:home" %}'
+                        }else{
+                            alert('添加失败')
+                        }
+
+                    }
+                })
+            }else{
+                alert('好好填')
+            }
+        }
+    </script>
+</head>
+<body>
+<nav class="navbar navbar-default nav-self">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">百知课程后台管理系统</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'userapp:login' %}login.html" role="button">登录 <span class="glyphicon glyphicon-log-in"></span></a>
+                </li>
+                <li>
+                    <a href="{% url 'userapp:loginout' %}">退出 <span class="glyphicon glyphicon-log-out"></span></a>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="">
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel-group col-sm-2 left-side-bar" id="accordion" role="tablist" aria-multiselectable="true">
+            <div>
+                <div class="panel panel-default">
+                  <div class="panel-heading left-side-header"><a href="home.html">百知课程</a></div>
+                  <h5 class="course-python"><a href="python.html">Python语法</a></h5>
+                  <div class="list-group">
+                      <a href="pythonBase.html" class="list-group-item">Python基础</a>
+                      <a href="#" class="list-group-item">Python高级</a>
+                  </div>
+                    <h5 class="course-h5"><a href="">Web前端</a></h5>
+                    <div class="list-group">
+                      <a href="#" class="list-group-item">HTML/CSS</a>
+                      <a href="#" class="list-group-item">JavaScript</a>
+                      <a href="#" class="list-group-item">Jquery</a>
+                    </div>
+                    <h5 class="course-back"><a href="">web后端</a></h5>
+                    <div class="list-group">
+                      <a href="#" class="list-group-item">MySQL</a>
+                      <a href="#" class="list-group-item">Django</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Tab panes 详情展示面板 -->
+        <div class="tab-content col-sm-10 right-side">
+
+            <div class="panel panel-default right-side-content">
+                <div class="page-header">
+                  <h3>增加文章</h3>
+                </div>
+                <form action="{% url 'courseapp:add_article_logic' %}" >
+                    {% csrf_token %}
+                	<table class="table table-bordered">
+	                    <tr>
+	                        <td align="center" valign="middle">文章名称：</td>
+	                        <td><input type="text" class="my-inp" id="my-inp" name="name" onblur="checkarticle()"/></td>
+                            <span class="my-inp_name" id="my-inp_name"></span>
+	                    </tr>
+	                    <tr>
+	                        <td align="center">所属课程/类别：</td>
+	                        <td>
+	                            <select name="course_sel" class="my-sel"  onchange="choosecourse()">
+	                                <option value="default-course">请选择所属课程：</option>
+                                    {% for foo in courses %}
+                                        <option value="{{ foo.id }}">{{ foo.name }}</option>
+                                    {% endfor %}
+
+
+{#	                                <option value="python">Python语法</option>#}
+{#	                                <option value="h5">Web前端</option>#}
+{#	                                <option value="javascript">Web后端</option>#}
+	                            </select>
+	                            <select name="cate_sel" class="my-sel">
+{#	                                <option value="default-cate">请选择所属课程分类：</option>#}
+{#	                                <option value="python_base">Python基础</option>#}
+{#	                                <option value="python_ad">Python高级</option>#}
+{#	                                <option value="h5_base">HTML/CSS</option>#}
+{#	                                <option value="h5_js">JavaScript</option>#}
+	                            </select>
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td align="center" valign="middle">发布时间：</td>
+	                        <td>
+	                            <input type="datetime-local" class="my-inp" id="time" name="time">
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <td align="center">内容：</td>
+	                        <td><textarea class="form-control" id="form-control" name="text" rows="3"></textarea></td>
+                            <span id="form-controlspan"></span>
+	                    </tr>
+	                </table>
+	            <!--按钮组-->
+	                <div class="btn-toolbar" role="toolbar" aria-label="...">
+	                    <div class="btn-group" role="group" aria-label="...">
+	                        <a href="javascript:void(0)"><button type="button" class="btn btn-default my-btn" onclick="save()"><span class="glyphicon glyphicon-floppy-disk"></span>
+	                            保存
+	                        </button>
+	                        </a>
+	                    </div>
+
+	                </div>
+                </form>
+
+
+
+            </div>
+            <!--分页显示-->
+        </div>
+
+    </div>
+
+</div>
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-heart-empty glyphicon"></span> 关注我们</h4>
+                    <p>最受欢迎的管理平台</p>
+                    <p><a href="#" class="ic_df"> 新浪微博</a> </p>
+                    <p><a href="#" class="ic_weichat"> 官方微信</a> </p>
+                  </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-king"> 开发平台</span> </h4>
+                    <p>加入开发平台，尊享会员福利，成为资深程序猿</p>
+                    <p class="p_idea"><a href="http://www.baizhibest.com"  class="btn btn-default btn-lg idea">我要开发</a></p>
+                  </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-phone-alt"></span> 关于我们</h4>
+                    <p>欢迎反馈宝贵意见</p>
+                    <p class="p_idea"><a href="http://www.baizhibest.com"  class="btn btn-default btn-lg idea">意见反馈</a></p>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 cp_info">
+                <div class="no-mp">
+                    <p>CopyRight © 2020 北京百知教育科技有限公司 All Rights Reserved</p>
+                    <p>电话：010-****888    京ICP备*******8号</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

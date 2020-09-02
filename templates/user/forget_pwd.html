@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load static %}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>百知Python课程管理系统-忘记密码</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+	<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/register.js' %}"></script>
+	<style>
+		.reg_form {
+			margin:65px 0 0 30px;
+		}
+	</style>
+</head>
+<body>
+	<div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo"><img src="{% static 'images/bz_logo.gif' %}"></a>
+			<div class="reg_slogan">站在时代风口 · 抢占人工智能</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>密码找回</h1>
+			</div>
+			<div class="reg_form clearfix">
+				<form action="">
+				<ul>
+					<li>
+						<label>用户名:</label>
+						<input type="text" name="user_name" id="user_name" onblur="check_name()">
+                        <span class="error_tip" id="name_span" style="display: block"></span>
+					</li>
+					<li>
+						<label>邮箱:</label>
+						<input type="text" name="email" id="email" onblur="check_email()">
+						<span class="error_tip" id="email_span" style="display: block"></span>
+					</li>
+
+					<li class="reg_sub">
+						<input type="button" value="提交" name="" onclick="form_pwd()">
+					</li>
+				</ul>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="footer no-mp">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>
+		</div>
+		<p>CopyRight © 2020 北京百知教育科技有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+    <script>
+        // 校验用户名
+        function check_name() {
+            var name = document.getElementById("user_name").value;
+            var name_span = document.getElementById("name_span");
+            //用户名的规则： 用户名必须为2到10位中文名称
+            var rst = /^[\u4e00-\u9fa5]{2,10}$/;
+            if (rst.test(name)){
+                $.ajax({
+                        type: 'get',
+                        data: 'name=' + $('[name="user_name"]').val(),
+                        url: '{% url "userapp:check_name" %}',
+                        success: function(data) {
+                            console.log(data);
+                            if (data==="1"){
+                                $('#name_span').html('用户名存在').css('color','green');
+                                return true
+                            }else{
+                                $('#name_span').html('用户名不存在');
+                                return false
+                            }
+                        }
+                    });
+                return true
+            }else{
+                if(name===''){
+                name_span.innerHTML = "不能为空".fontcolor("red");
+                    return false
+                }else{name_span.innerHTML = "用户名必须为2到10位中文名称".fontcolor("red");
+                    return false
+                }
+            }
+        }
+
+
+        // 校验邮箱
+        function check_email() {
+            var email = document.getElementById("email").value;
+            var email_span = document.getElementById("email_span");
+            var rst = /^\w+@(\w+\.)+(com|cn|net)$/;
+            if (rst.test(email)) {
+                email_span.innerHTML = ''.fontcolor('green');
+                return true
+            }else{
+                if (email===''){
+                    email_span.innerHTML = '不能为空'.fontcolor('red');
+                    return false
+                }else{
+                    email_span.innerHTML = '不符合邮箱规则'.fontcolor('red');
+                    return false
+                }
+            }
+        }
+
+        function form_pwd() {
+            var a = check_email();
+            var b = check_name();
+            console.log(a,b);
+            if (a&&b){}
+            $.ajax({
+                type: 'get',
+                url: '{% url "userapp:forget_logic" %}',
+                data: $('form').serialize(),//'username=' + $('#user_name').val(),
+                success: function (data) {
+                    if (data.status === 0){
+                        alert('邮件发送失败，请重新发送');
+                    }else {
+                        alert('邮件发送成功，请点击邮箱连接修改密码');
+                        location.href = "{% url 'userapp:reset_pwd' %}?name=" + $('#user_name').val();
+                    }
+                }
+            })
+        }
+
+    </script>
+</body>
+</html>

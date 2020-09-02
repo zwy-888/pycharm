@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load static %}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>百知Python课程管理系统-注册</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/reset.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+	<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+	<script type="text/javascript" src="js/register.js"></script>
+    <script>
+        // 刷新验证码
+        function re_img() {
+            var img = document.getElementById('cap_img');
+            img.src = "{% url 'userapp:getcaptcha' %}?time=" + (new Date()).getTime();
+        }
+        // 校验用户名
+        function check_name() {
+            var name = document.getElementById("user_name").value;
+            var name_span = document.getElementById("name_span");
+            //用户名的规则： 用户名必须为2到10位中文名称
+            var rst = /^[\u4e00-\u9fa5]{2,10}$/;
+            if (rst.test(name)){
+                $.ajax({
+                        type: 'get',
+                        data: 'name=' + $('[name="user_name"]').val(),
+                        url: '{% url "userapp:check_name" %}',
+                        success: function(data) {
+                            console.log(data);
+                            if (data==="1"){
+                                $('#name_span').html('用户名已存在不可用');
+                                return false
+                            }else{
+                                $('#name_span').html('用户名可用');
+                                return true
+                            }
+                        }
+                    });
+                return true
+            }else{
+                if(name===''){
+                    name_span.innerHTML = "不能为空".fontcolor("red");
+                    return false
+                }else{name_span.innerHTML = "用户名必须为2到10位中文名称".fontcolor("red");
+                    return false
+                }
+            }
+        }
+
+        // 校验密码
+        function check_pwd() {
+            var pwd = document.getElementById("pwd").value;
+            var pwd_span = document.getElementById("pwd_span");
+            //密码的规则： 密码必须为6到18位字母、数字或下划线
+            var rst = /^\w{6,18}$/;
+            if(rst.test(pwd)){
+                pwd_span.innerHTML = "".fontcolor("green");
+                return true
+            }else{
+                if (pwd===''){
+                    pwd_span.innerHTML = "不能为空".fontcolor('red');
+                    return false
+                }else{
+                    pwd_span.innerHTML = '密码必须为6到18位字母、数字或下划线'.fontcolor('red')
+                    return false
+                }
+            }
+        }
+        // 校验二次密码
+        function check_cpwd() {
+            var pwd = document.getElementById("pwd").value;
+            console.log(pwd);
+            var cpwd = document.getElementById("cpwd").value;
+            console.log(cpwd);
+            var cpwd_span = document.getElementById("cpwd_span");
+            var rst = /^\w{6,18}$/;
+            if (rst.test(cpwd)){
+                if(pwd===cpwd){
+                    cpwd_span.innerHTML = "".fontcolor('green');
+                    return true
+                }else{
+                    cpwd_span.innerHTML = "两次密码不一致".fontcolor("red");
+                    return false
+                }
+            }else{
+                if (cpwd===''){
+                    cpwd_span.innerHTML = '不能为空'.fontcolor('red');
+                    return false
+                }else {
+                    cpwd_span.innerHTML =" 密码必须为6到18位字母、数字或下划线".fontcolor("red")
+                    return false
+                }
+            }
+        }
+
+        // 校验邮箱
+        function check_email() {
+            var email = document.getElementById("email").value;
+            var email_span = document.getElementById("email_span");
+            var rst = /^\w+@(\w+\.)+(com|cn|net)$/;
+            if (rst.test(email)) {
+                email_span.innerHTML = ''.fontcolor('green');
+                return true
+            }else{
+                if (email===''){
+                    email_span.innerHTML = '不能为空'.fontcolor('red');
+                    return false
+                }else{
+                    email_span.innerHTML = '不符合邮箱规则'.fontcolor('red');
+                    return false
+                }
+            }
+        }
+
+        // 校验验证码
+        function check_captcha() {
+            var captcha = document.getElementById('captcha1').value;
+            console.log(captcha);
+            var captcha_span = document.getElementById('captcha_span');
+            if (captcha===''){
+                captcha_span.innerHTML = '不能为空';
+                return false
+            }else{
+                captcha_span.innerHTML = '';
+                return true
+            }
+        }
+        function form_submit(){
+            console.log(123);
+            var allow = $('input:checked').val();
+            console.log(allow);
+            if (allow==='on'){
+                $('#allow_span').html('');
+                var name = check_name();
+                var email = check_email();
+                var password = check_pwd();
+                var captcha = check_captcha();
+                var cpwd = check_cpwd();
+                console.log(name,password,email,password,captcha,cpwd);
+
+                if(name&&email&&password&&cpwd&&allow&&captcha){
+                    $.ajax({
+                        type:'post',
+                        url: '{% url "userapp:register_logic" %}',
+                        data : $('form').serialize(),
+                        success: function (data) {
+                            console.log(data);
+                            if (data.status === 0){
+                                alert(data.msg)
+                            }else{
+                                alert('注册成功，等待管理员审核！');
+                                location.href = "{% url 'userapp:login' %}"
+                            }
+                        }
+                    })
+               }
+            }else{
+                $('#allow_span').html('请勾选')
+            }
+        }
+    </script>
+</head>
+<body>
+	<div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo"><img src="{% static 'images/bz_logo.gif' %}"></a>
+			<div class="reg_slogan">站在时代风口 · 抢占人工智能</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>用户注册</h1>
+				<a href="{% url 'userapp:login' %}">登录</a>
+			</div>
+			<div class="reg_form clearfix">
+				<form method="post" >
+                    {% csrf_token %}
+				<ul>
+					<li>
+
+						<input type="text" name="user_name" id="user_name" placeholder="请输入真实姓名" onblur="check_name()">
+						<label>用户名:</label><span class="error_tip" id="name_span" style="display: block"></span>
+
+					</li>					
+					<li>
+
+						<input type="password" name="pwd" id="pwd" placeholder="请输入密码" onblur="check_pwd()">
+						<label>密码:</label><span class="error_tip" id="pwd_span" style="display: block"></span>
+
+					</li>
+					<li>
+
+						<input type="password" name="cpwd" id="cpwd" placeholder="请输入确认密码" onblur="check_cpwd()">
+						<label>确认密码:</label><span class="error_tip" id="cpwd_span" style="display: block"></span>
+
+					</li>
+					<li>
+
+						<input type="text" name="email" id="email" placeholder="请输入邮箱" onblur="check_email()">
+						<label>邮箱:</label><span class="error_tip" id="email_span" style="display: block"></span>
+
+					</li>
+					<li>
+                        <label>验证码:</label>
+                        <img id="cap_img" src="{% url 'userapp:getcaptcha' %}" alt="" width="80">
+                        <a href="javascript:void (0)" style="text-decoration: underline;" onclick="re_img()">看不清，换一张</a>
+                          <input type="text" name="captcha" id="captcha1" style="width: 100px;" onblur="check_captcha()">
+                        <span class="error_tip" id="captcha_span" style="display: block"></span>
+
+                    </li>
+
+					<li class="agreement">
+						<input type="checkbox" name="allow" id="allow" checked="checked">
+						<label>同意”百知课程管理系统使用协议“</label>
+						<span class="error_tip2" style="display: block" id="allow_span"></span>
+					</li>
+					<li class="reg_sub">
+                        <input type="button" value="注 册" name="" onclick="form_submit();">
+					</li>
+				</ul>
+				</form>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="footer no-mp">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2020 北京百知教育科技有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bodymain.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}"/>
+    <!-- <link rel="stylesheet" type="text/css" href="css/pythonBase.css"/> -->
+    <script src="{% static 'js/jquery.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static 'js/bootstrap.js' %}" type="text/javascript" charset="utf-8"></script>
+    <title>百知课程后台管理系统-Python语法文章</title>
+</head>
+<body>
+<nav class="navbar navbar-default nav-self">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">百知课程后台管理系统</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'userapp:login' %}" role="button">登录 <span class="glyphicon glyphicon-log-in"></span></a>
+                </li>
+                <li>
+                    <a href="{% url 'userapp:loginout' %}">退出 <span class="glyphicon glyphicon-log-out"></span></a>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="">
+                </div>
+                <div class="btn-group" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="panel-group col-sm-2 left-side-bar" id="accordion" role="tablist" aria-multiselectable="true">
+            <div>
+                <div class="panel panel-default">
+                  <div class="panel-heading left-side-header"><a href="{% url 'courseapp:home' %}">百知课程</a></div>
+                    {% for foo1 in course %}
+                        <h5 class="course-python"><a href="{% url 'courseapp:python' %}?">{{ foo1.name }}</a></h5>
+                        {% for foo2 in cate %}
+                            {% if foo1.id == foo2.parent_id %}
+                                <a href="{% url 'courseapp:pythonbase' %}" class="list-group-item">{{ foo2.name }}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+{#                    {% for foo in cate %}#}
+{#                        <a href="pythonBase.html" class="list-group-item">Python基础</a>#}
+{#                    {% endfor %}#}
+
+
+{#                  <h5 class="course-python"><a href="python.html">Python语法</a></h5>#}
+{#                  <div class="list-group">#}
+{#                      <a href="pythonBase.html" class="list-group-item">Python基础</a>#}
+{#                      <a href="#" class="list-group-item">Python高级</a>#}
+{#                  </div>#}
+{#                    <h5 class="course-h5"><a href="">Web前端</a></h5>#}
+{#                    <div class="list-group">#}
+{#                      <a href="#" class="list-group-item">HTML/CSS</a>#}
+{#                      <a href="#" class="list-group-item">JavaScript</a>#}
+{#                      <a href="#" class="list-group-item">Jquery</a>#}
+{#                    </div>#}
+{#                    <h5 class="course-back"><a href="">web后端</a></h5>#}
+{#                    <div class="list-group">#}
+{#                      <a href="#" class="list-group-item">MySQL</a>#}
+{#                      <a href="#" class="list-group-item">Django</a>#}
+{#                    </div>#}
+                </div>
+            </div>
+        </div>
+        <div class="tab-content col-sm-10 right-side">
+            <div class="panel panel-default right-side-content">
+                <ol class="breadcrumb">
+                    <li><a href="{% url 'courseapp:home' %}">百知课程</a></li>
+                    <li>{{ foo1.name }}</li>
+                </ol>
+                <div class="page-header">
+                  <h3>课程文章</h3>
+                </div>
+                <div class="panel-body caret_parent">
+                    <a href="#" class="btn btn-default">阅读量 <span class="glyphicon glyphicon-arrow-down"></span></a>
+                    <a href="#" class="btn btn-default">发布时间 <span class="glyphicon glyphicon-arrow-down"></span></a>
+                    <a href="addArticle.html" class="btn pull-right base-color add-course"><span class="glyphicon glyphicon-plus"></span> 增加文章</a>
+                    <a href="addCourse.html" class="btn pull-right base-color"><span class="glyphicon glyphicon-plus"></span> 增加课程/分类</a>
+                </div>
+                <div class="panel-heading">文章列表</div>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"/></th>
+                            <th>ID</th>
+                            <th>文章标题</th>
+                            <th>所属课程</th>
+                            <th>发布日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+{#                        <tr>#}
+{#                            <td><input type="checkbox" class="checks"/></td>#}
+{#                            <td>1</td>#}
+{#                            <td>#}
+{#                                <a href="modifyArticle.html">第一章 Python概述</a>#}
+{#                            </td>#}
+{#                            <td>Python基础</td>#}
+{#                            <td>#}
+{#                                2018年9月28日 15:22#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <button class="btn btn-warning">删除</button>#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td><input type="checkbox"  class="checks"/></td>#}
+{#                            <td>2</td>#}
+{#                            <td><a href="modifyArticle.html">第二章 Python基础语法</a></td>#}
+{#                            <td>Python基础</td>#}
+{#                            <td>#}
+{#                                2018年9月28日 15:22#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <button class="btn btn-warning">删除</button>#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td><input type="checkbox" class="checks"/></td>#}
+{#                            <td>3</td>#}
+{#                            <td><a href="modifyArticle.html">第三章 Python流程控制</a></td>#}
+{#                            <td>Python基础</td>#}
+{#                            <td>#}
+{#                                2018年9月28日 15:22#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <button class="btn btn-warning">删除</button>#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td><input type="checkbox"  class="checks"/></td>#}
+{#                            <td>4</td>#}
+{#                            <td><a  href="modifyArticle.html">第四章 Python列表</a></td>#}
+{#                            <td>Python基础</td>#}
+{#                            <td>#}
+{#                                2018年9月28日 15:22#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <button class="btn btn-warning">删除</button>#}
+{#                            </td>#}
+{#                        </tr>#}
+{#                        <tr>#}
+{#                            <td><input type="checkbox" class="checks"></td>#}
+{#                            <td>5</td>#}
+{#                            <td><a  href="modifyArticle.html">第五章 Python元组</a></td>#}
+{#                            <td>Python基础</td>#}
+{#                            <td>#}
+{#                                2018年9月28日 15:22#}
+{#                            </td>#}
+{#                            <td>#}
+{#                                <button class="btn btn-warning">删除</button>#}
+{#                            </td>#}
+{#                        </tr>#}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation" class="pull-right pagitor-manager">
+                    <ul class="pagination">
+                        {% if page.has_previous %}
+                        <li>
+                            <a href="{% url 'courseapp:home' %}?num={{ page.previous_page_number }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for foo in page.paginator.page_range %}
+                        <li>
+                            {% if page.number == foo %}
+                                <a href="{% url 'courseapp:home' %}?num={{ foo }}" style="background-color: red">
+                                {{ foo }}
+                            {% else %}
+                                <a href="{% url 'courseapp:home' %}?num={{ foo }}">{{ foo }}
+                            {% endif %}
+                            </a></li>
+                    {% endfor %}
+                    {% if page.has_next %}
+                        <li>
+                            <a href="{% url 'courseapp:home' %}?num={{ page.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            <!--分页显示-->
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-heart-empty glyphicon"></span> 关注我们</h4>
+                    <p>最受欢迎的管理平台</p>
+                    <p><a href="#" class="ic_df"> 新浪微博</a> </p>
+                    <p><a href="#" class="ic_weichat"> 官方微信</a> </p>
+                  </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-king"> 开发平台</span> </h4>
+                    <p>加入开发平台，尊享会员福利，成为资深程序猿</p>
+                    <p class="p_idea"><a href="http://www.baizhibest.com"  class="btn btn-default btn-lg idea">我要开发</a></p>
+                  </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="thumbnail">
+                  <div class="caption">
+                    <h4><span class="glyphicon glyphicon-phone-alt"></span> 关于我们</h4>
+                    <p>欢迎反馈宝贵意见</p>
+                    <p class="p_idea"><a href="http://www.baizhibest.com"  class="btn btn-default btn-lg idea">意见反馈</a></p>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 cp_info">
+                <div class="no-mp">
+                    <p>CopyRight © 2020 北京百知教育科技有限公司 All Rights Reserved</p>
+                    <p>电话：010-****888    京ICP备*******8号</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
